@@ -38,9 +38,9 @@ export const StyledListItemText = styled(ListItemText)(() => ({
     fontSize: '0.9rem'
   }
 }));
-export const StyledIconButton = styled(IconButton)(({ theme }) => ({
+export const StyledIconButton = styled(IconButton)(() => ({
   color: '#fff !important',
-  marginLeft: theme.spacing(2),
+  // marginLeft: theme.spacing(2),
   width: 40,
   height: 40,
   borderRadius: 50,

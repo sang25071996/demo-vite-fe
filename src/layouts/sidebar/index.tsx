@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../../assets/logo.png';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import { styled, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -9,8 +9,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import MuiDrawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -60,11 +58,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   },
   ...(open && {
     ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme),
+    '& .MuiDrawer-paper': {
+      ...openedMixin(theme),
+      borderRight: 'none',
+    },
   }),
   ...(!open && {
     ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme),
+    '& .MuiDrawer-paper': {
+      ...closedMixin(theme),
+      borderRight: 'none',
+    },
   }),
 }));
 
@@ -105,15 +109,15 @@ const closeNestedMenu = (menus: MenuItemType[]) => {
 };
 
 export const Sidebar: React.FC = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState<MenuItemType[]>(menus);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setOpen(!open);
   };
   const handleDrawerClose = () => {
-    setOpen(false);
+    setOpen(!open);
     closeNestedMenu(menu);
   };
 
@@ -128,20 +132,8 @@ export const Sidebar: React.FC = () => {
   return (
     <LayoutProvider value={{ open }}>
       <StyledGrid>
-        <AppBar position="fixed" open={open}>
+        <AppBar position="fixed" style={{ paddingLeft: open ? '240px' : '65px', transition: '225ms' }}>
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-              }}
-              style={{ display: open ? 'none' : 'block' }}
-            >
-              <MenuIcon />
-            </IconButton>
             <Grid container direction="row" alignItems="center" justifyContent="space-between">
               <Grid item>
                 <Grid
@@ -164,15 +156,11 @@ export const Sidebar: React.FC = () => {
             </Grid>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={open} style={{ width: open ? '254px' : '65px', zIndex: 5000 }}>
           <Grid container alignItems="center">
             <DrawerHeader>
-              <StyledIconButton onClick={handleDrawerClose}>
-                {theme.direction === 'rtl' ? (
-                  <ChevronRightIcon style={{ fill: 'white' }} />
-                ) : (
-                  <ChevronLeftIcon style={{ fill: 'white' }} />
-                )}
+              <StyledIconButton onClick={() => open ? handleDrawerOpen() : handleDrawerClose()}>
+                {open ? <ChevronLeftIcon style={{ fill: 'white' }} /> : <MenuIcon style={{ fill: 'white' }} />}
               </StyledIconButton>
             </DrawerHeader>
           </Grid>
@@ -246,7 +234,10 @@ export const Sidebar: React.FC = () => {
         <Box
           component="main"
           sx={{ backgroundColor: '#F7F9FA', marginTop: '65px' }}
-          style={{ width: open ? 'calc(100% - 254px)' : 'calc(100% - 65px)' }}
+          style={{
+            width: open ? 'calc(100% - 254px)' : 'calc(100% - 65px)',
+            borderRight: 'none'
+          }}
         >
           <Grid
             style={{
